@@ -1,15 +1,13 @@
-package ru.techcrat.musicproject.Models
+package ru.techcrat.musicproject.model
 
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentResolverCompat
 
 class LocalStorageProvider(private val context: Context) {
 

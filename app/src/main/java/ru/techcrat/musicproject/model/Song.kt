@@ -1,7 +1,6 @@
-package ru.techcrat.musicproject.Models
+package ru.techcrat.musicproject.model
 
 import android.net.Uri
-import java.time.Duration
 
 class Song(
     val uri: Uri,

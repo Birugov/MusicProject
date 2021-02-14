@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ImageView
+        android:id="@+id/song_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="@dimen/activity_vertical_margin"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/song_iv_marginBottom"
+        android:layout_marginEnd="@dimen/song_iv_marginLeft"
+        android:layout_marginStart="@dimen/song_iv_marginLeft"
+
+
+
+      />
+    <ImageView
+        android:id="@+id/play_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="@dimen/song_iv_marginLeft"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/activity_vertical_margin"
+        android:clickable="true"
+        android:focusable="true">
+
+    </ImageView>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/song_iv_marginLeft"
+        android:layout_toEndOf="@id/play_iv"
+        android:layout_marginStart="@dimen/activity_vertical_margin"
+        android:elevation="@dimen/activity_vertical_margin">
+
+    </ImageView>
+    <ImageView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/play_iv"
+        android:layout_marginBottom="@dimen/song_iv_marginLeft"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:elevation="@dimen/activity_vertical_margin"
+        >
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/song_artist_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+
+        android:layout_above="@id/play_iv"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/song_iv_marginLeft"
+
+        android:text="fdgdfgdfgdfg" />
+    <TextView
+        android:id="@+id/song_songname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/song_artist_name_tv"
+        android:text="fdgdfgdfg"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:fontFamily="sans-serif-black">
+
+    </TextView>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/activity_vertical_margin"
+        >
+    </ImageView>
+
+
+</RelativeLayout>
