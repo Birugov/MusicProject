@@ -9,11 +9,11 @@ import android.provider.MediaStore
 import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 import androidx.annotation.RequiresApi
 
-class LocalStorageProvider(private val context: Context) {
+class LocalStorageProvider {
 
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun getAllAudio():MutableList<Song>
+    fun getAllAudio(context: Context):MutableList<Song>
     {
         val audioList = mutableListOf<Song>()
         val uri:Uri= EXTERNAL_CONTENT_URI
