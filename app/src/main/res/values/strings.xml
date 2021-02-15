@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MusicProject</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">Local Storage</string>
+    <string name="tab_text_2">Spotify</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->

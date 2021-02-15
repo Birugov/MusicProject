@@ -7,4 +7,6 @@ class MainViewModule(val tokenService: SpotifyTokenService) : ViewModel() {
     fun onTokenObtained(token: String?) {
         tokenService.updateToken(token)
     }
+
+
 }

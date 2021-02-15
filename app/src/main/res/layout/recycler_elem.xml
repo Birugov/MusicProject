@@ -11,8 +11,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:cardCornerRadius="@dimen/activity_vertical_margin"
-        android:elevation="16dp">
+        android:elevation="16dp"
+        android:layout_margin="8dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

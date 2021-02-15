@@ -4,16 +4,17 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import com.spotify.android.appremote.api.ConnectionParams
+import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.sdk.android.authentication.AuthenticationClient
-import com.spotify.sdk.android.authentication.AuthenticationRequest
-import com.spotify.sdk.android.authentication.AuthenticationResponse
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.techcrat.musicproject.R
 import ru.techcrat.musicproject.ui.main.adapters.SectionsPagerAdapter
@@ -22,7 +23,6 @@ import ru.techcrat.musicproject.ui.main.adapters.SectionsPagerAdapter
 class MainActivity : AppCompatActivity() {
 
     private val vm by viewModel<MainViewModule>()
-    private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private val PERMISSION_REQUEST_CODE: Int = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,28 +36,45 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val response: AuthenticationResponse =
-                AuthenticationClient.getResponse(result.resultCode, result.data)
-            Log.d("token", response.accessToken ?: "none")
-            vm.onTokenObtained(response.accessToken)
-        }
         ActivityCompat.requestPermissions(
             this,
             arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
-        val builder: AuthenticationRequest.Builder = AuthenticationRequest.Builder(
-            CLIENT_ID,
-            AuthenticationResponse.Type.TOKEN,
-            Uri.parse(REDIRECT_URI).toString()
-        )
-        builder
-            .setShowDialog(true)
-            .setScopes(arrayOf("user-read-private", "streaming"))
-        val request: AuthenticationRequest = builder.build()
+        requestToken()
+    }
 
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request)
+    override fun onStart() {
+        super.onStart()
+        SpotifyService.connect(this) {
+            onResume()
+        }
+    }
+
+
+    fun requestToken() {
+        val request =
+            getAuthenticationRequest(AuthorizationResponse.Type.TOKEN)
+        AuthorizationClient.openLoginActivity(this, MainActivity.AUTH_TOKEN_REQUEST_CODE, request)
+    }
+
+    private fun getAuthenticationRequest(type: AuthorizationResponse.Type): AuthorizationRequest? {
+        return AuthorizationRequest.Builder(
+            CLIENT_ID,
+            type,
+            getRedirectUri()?.toString()
+        )
+            .setShowDialog(false)
+            .setScopes(
+                arrayOf(
+                    "user-read-email",
+                    "user-library-read",
+                    "user-read-private",
+                    "streaming"
+                )
+            )
+            .setCampaign("your-campaign-token")
+            .build()
     }
 
     override fun onRequestPermissionsResult(
@@ -78,54 +95,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-//            .setRedirectUri(REDIRECT_URI)
-//            .showAuthView(true)
-//            .build()
-//        SpotifyAppRemote.connect(this, connectionParams,
-//            object : Connector.ConnectionListener {
-//                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
-//                    mSpotifyAppRemote = spotifyAppRemote
-//                    mSpotifyAppRemote?
-//                    Log.d("MainActivity", "Connected! Yay!")
-//
-//                    // Now you can start interacting with App Remote
-//                    connected()
-//                }
-//
-//                override fun onFailure(throwable: Throwable) {
-//                    Log.e("MyActivity", throwable.message, throwable)
-//
-//                    // Something went wrong when attempting to connect! Handle errors here
-//                }
-//            })
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
-//    }
-//
-//    private fun connected() {
-//        // Play a playlist
-//        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL")
-//
-//        // Subscribe to PlayerState
-//        mSpotifyAppRemote?.getPlayerApi()
-//            ?.subscribeToPlayerState()
-//            ?.setEventCallback { playerState ->
-//                val track: Track = playerState.track
-//                if (track != null) {
-//                    Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
-//                }
-//            }
-//    }
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val response = AuthorizationClient.getResponse(resultCode, data)
+        if (response.error != null && response.error.isEmpty()) {
+            //setResponse(response.error)
+        }
+        if (requestCode == AUTH_TOKEN_REQUEST_CODE) {
+            vm.onTokenObtained(response.accessToken)
+        }
+    }
+
+    private fun getRedirectUri(): Uri? {
+        return Uri.Builder()
+            .scheme(getString(R.string.com_spotify_sdk_redirect_scheme))
+            .authority(getString(R.string.com_spotify_sdk_redirect_host))
+            .build()
+    }
 
     companion object {
-        private const val REDIRECT_URI = "spotify-sdk://auth"
-        private const val CLIENT_ID = "089d841ccc194c10a77afad9e1c11d54"
+        private const val REDIRECT_URI = "musicproject://callback"
+        private const val AUTH_TOKEN_REQUEST_CODE = 0x10
+        private const val CLIENT_ID = "fbaa28eb256b47ada72a8bc2a16f0fb5"
         private const val REQUEST_CODE = 1337
     }
 }

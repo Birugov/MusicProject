@@ -6,26 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recycler_elem.view.*
 import ru.techcrat.musicproject.R
+
 import kotlin.collections.ArrayList
 
 
-class SpotifyRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SpotifyRecyclerAdapter(private val listener:OnItemClickListener) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var spotiitems: List<SpotifySong> = ArrayList()
+
+    private var spotiitems: List<Track> = ArrayList()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return SpotifyViewHolder(
             LayoutInflater.from(parent.context).inflate(
-            R.layout.recycler_elem,
-            parent,
-            false
-        ))
+                R.layout.recycler_elem,
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is SpotifyRecyclerAdapter.SpotifyViewHolder->(holder.bind(spotiitems[position]))
+            is SpotifyRecyclerAdapter.SpotifyViewHolder -> (holder.bind(spotiitems[position]))
         }
     }
 
@@ -33,33 +40,43 @@ class SpotifyRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return spotiitems.size
     }
 
-    fun submitData(song: List<SpotifySong>) {
-        spotiitems = song
+    fun submitData(songs: List<Track>) {
+        spotiitems = songs
         notifyDataSetChanged()
     }
 
-    inner class SpotifyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SpotifyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val artistName = itemView.artist_name_tv
         val songName = itemView.song_name_tv
-        //val songImg = itemView.song_iv
+        val songImg = itemView.song_iv
 
-        fun bind(song: SpotifySong) {
-            val tracks:MutableList<Track> = ArrayList()
-            for (i in song.items){
-                tracks.add(i.track)
-            }
-            for (i in tracks) {
-                songName.text = i.name
-            }
-            val names: MutableList<String> = ArrayList()
-            for (i in tracks) {
-                for (a in i.artists)
-                names.add(i.name)
-            }
-            names.joinToString(",")
-            artistName.text = names.toString()
+        init {
+            itemView.setOnClickListener(this)
+        }
 
+        fun bind(song: Track) {
+            songName.text = song.name
+            artistName.text = song.artists.joinToString { it.name }
+            var trackUrl: String
+            for (i in song.album.images) {
+                if (i.height == 300) {
+                    trackUrl = i.url
+                    Picasso.get().load(trackUrl).into(songImg)
+                }
+            }
 
         }
+
+        override fun onClick(v: View?) {
+            val position:Int=adapterPosition
+            if (position!= RecyclerView.NO_POSITION){
+                listener.onItemClick(position)
+            }
+        }
     }
+    interface OnItemClickListener{
+        fun onItemClick(position: Int)
+    }
+
+
 }

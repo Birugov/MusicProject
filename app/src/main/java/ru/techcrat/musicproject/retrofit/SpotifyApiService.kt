@@ -9,5 +9,5 @@ import retrofit2.http.Header
 
 interface SpotifyApiService {
     @GET("tracks")
-    suspend fun getSongs():Response<List<SpotifySong>>
+    suspend fun getSongs():Response<SpotifySong>
 }

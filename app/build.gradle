@@ -46,7 +46,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
-    implementation project(':spotify-app-remote-release-0.7.1')
+    implementation 'androidx.browser:browser:1.3.0'
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.squareup.retrofit2:retrofit:2.6.4"
     implementation "com.squareup.retrofit2:converter-gson:2.6.4"
@@ -61,15 +61,18 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     compile 'com.android.support.constraint:constraint-layout:2.0.4'
-    compile 'com.spotify.android:auth:1.0.0-alpha'
     def fragment_ktx = "1.2.5"
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
     def koin_version = '2.2.2'
     implementation "org.koin:koin-core:$koin_version"
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
-
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
-
+    implementation "com.squareup.okhttp3:logging-interceptor:4.0.1"
+    implementation project(path: ':spotify-auth-release-1.2.1')
+    implementation project(path: ':spotify-app-remote-release-0.7.1')
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
 
 }
