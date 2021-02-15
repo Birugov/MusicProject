@@ -36,6 +36,7 @@ class SpotifyFragment : Fragment(), CoroutineScope by MainScope(), SpotifyRecycl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initRecycler()
         vm.tokenService.tokenLiveData.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -61,7 +62,7 @@ class SpotifyFragment : Fragment(), CoroutineScope by MainScope(), SpotifyRecycl
             val response= withContext(Dispatchers.IO){
                 service.getSongs()
             }
-            response.body()?.items?.map { it.track }?.let { SpotifyFragment().passData(it as MutableList<Track>)}
+            response.body()?.items?.map { it.track }?.let { passData(it as MutableList<Track>)}
 
         }
     }
@@ -69,23 +70,32 @@ class SpotifyFragment : Fragment(), CoroutineScope by MainScope(), SpotifyRecycl
     private fun initRecycler() {
         spotify_rv.apply {
             layoutManager = LinearLayoutManager(this.context)
-            adapterSong = SpotifyRecyclerAdapter(SpotifyFragment())
+            adapterSong = SpotifyRecyclerAdapter(this@SpotifyFragment)
             adapter = adapterSong
 
         }
     }
-    private fun passData(songs: MutableList<Track>) {
+     private fun passData(songs: MutableList<Track>) {
         for (i in songs){
             spotiitems.add(i)
         }
+         adapterSong.notifyDataSetChanged()
     }
 
     override fun onItemClick(position: Int) {
 
         val clickedItem= spotiitems[position]
         val uri= clickedItem.uri
-        SpotifyService.play("$uri")
-        adapterSong.notifyItemChanged(position)
+        SpotifyService.playingState {
+                when (it) {
+                    PlayingState.PLAYING -> SpotifyService.pause()
+
+                    PlayingState.PAUSED -> SpotifyService.play(uri)
+
+                }
+        }
+        adapterSong.notifyDataSetChanged()
+
     }
 
 
